@@ -1,4 +1,4 @@
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { BotonReusable } from "./components/BotonReusable";
 import { Change } from "./types/cambio";
 import { HistorialCambios } from "./components/HistorialCambios";
@@ -95,10 +95,24 @@ export const CounterApp = () => {
         count: 0,
         history: [],
         future: [],
-        nextId: 1
+        nextId: 1,
     };
+
+    const init = (): State => {
+        try {
+            const data = localStorage.getItem("counter");
+            return data ? JSON.parse(data) : initialState;
+        } catch {
+            return initialState;
+        }
+    };
+
     const [step, setStep] = useState(1);
-    const [counter, setCounter] = useReducer(counterReducer, initialState);
+    const [counter, setCounter] = useReducer(
+        counterReducer,
+        initialState,
+        init,
+    );
 
     const setInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         let value = Number(e.target.value);
@@ -112,6 +126,9 @@ export const CounterApp = () => {
         }
     };
 
+    useEffect(() => {
+        localStorage.setItem("counter", JSON.stringify(counter));
+    }, [counter]);
     return (
         <>
             <div className="container-contador">
