@@ -1,0 +1,103 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #333;
+  color: #ddd;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#root{
+  height: 60vh;
+  width: 80%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.container-contador{
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.container-contador input{
+  background-color: #333;
+  border: #555 solid 2px;
+  color: #ddd;
+}
+.span-step{
+  background-color: #333;
+  border: #555 solid 2px;
+  color: #ddd;
+}
+.counter{
+  text-align: center;
+  font-size: 3rem;
+}
+.container-botones{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 25px
+}
+.container-botones2{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 25px
+}
+.container-botones button{
+  width: 70px;
+  height: 70px;
+  font-size: 2rem;
+}
+
+.container-history{
+  width: 30%;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  align-items: center;
+  margin-left: 150px;
+  gap: 15px;
+}
+.history{
+  text-align: center;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  height: 50%;
+  max-height: 50%;
+  width: 100%;
+  overflow-y: auto;
+  border: #222 solid 3px;
+  border-radius: 10px;
+  background-color: #555;
+}
+.cambio{
+  margin: 3px;
+  background-color: #7ad;
+  border-radius: 5px;
+  color: #222;
+}
