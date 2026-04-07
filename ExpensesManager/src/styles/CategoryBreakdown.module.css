@@ -1,0 +1,70 @@
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.labelGroup {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 110px;
+    flex-shrink: 0;
+}
+
+.emoji {
+    font-size: 14px;
+}
+
+.name {
+    font-size: 12px;
+    color: var(--color-text-secondary, #888);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.track {
+    flex: 1;
+    height: 6px;
+    background: var(--color-bg-secondary, #eee);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.values {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 80px;
+    flex-shrink: 0;
+}
+
+.amount {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.pct {
+    font-size: 11px;
+    color: var(--color-text-secondary, #888);
+}
+
+.empty {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--color-text-secondary, #888);
+    font-size: 14px;
+}

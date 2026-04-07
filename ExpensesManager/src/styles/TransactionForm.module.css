@@ -1,0 +1,102 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.typeToggle {
+    display: flex;
+    border: 0.5px solid var(--color-border, #ddd);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.typeBtn {
+    flex: 1;
+    padding: 9px;
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--color-text-secondary, #888);
+    transition: all 0.12s;
+}
+
+.typeBtnActive {
+    background: var(--color-text-primary, #111);
+    color: var(--color-bg-primary, #fff);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.label {
+    font-size: 12px;
+    color: var(--color-text-secondary, #888);
+}
+
+.input {
+    padding: 8px 10px;
+    border: 0.5px solid var(--color-border, #ddd);
+    border-radius: 8px;
+    background: var(--color-bg-primary, #fff);
+    color: inherit;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+}
+
+.error {
+    font-size: 11px;
+    color: #d85a30;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 0.5px solid var(--color-border, #ddd);
+    background: transparent;
+    color: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.btnPrimary {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    background: var(--color-text-primary, #111);
+    color: var(--color-bg-primary, #fff);
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.btnDanger {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 0.5px solid #d85a3044;
+    background: transparent;
+    color: #d85a30;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    margin-left: auto;
+}
