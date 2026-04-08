@@ -118,7 +118,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
               <div
                 className={styles.amount}
                 style={{
-                  color: tx.type === "income" ? "#1D9E75" : "inherit",
+                  color: tx.type === "income" ? "#1D9E75" : "#D85A30",
                 }}
               >
                 {tx.type === "income" ? "+" : "−"}

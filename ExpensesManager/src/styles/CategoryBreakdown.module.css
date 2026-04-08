@@ -50,6 +50,7 @@
     align-items: flex-end;
     width: 80px;
     flex-shrink: 0;
+    color: var(--color-text-secondary);
 }
 
 .amount {

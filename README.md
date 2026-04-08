@@ -144,9 +144,9 @@ Ejemplo: chat o tablero colaborativo
 - Sincronización de estado
 - Optimistic UI
 
-# CheatSheet para crear Proyectos
+# CheatSheets
 
-Crear proyectos: 
+## Crear proyectos React: 
 
     npm create vite@latest
 
@@ -160,3 +160,43 @@ Prettier: agregar en el `package.json`
         "tabWidth": 4,
         "semi": true
     }
+
+## Sequelize:
+
+### Instanciar Sequelize:
+
+    const sequelize = new Sequelize('database', 'user', 'password', {options})
+
+### Crear Modelos
+
+    const Table = sequelize.define('table_name',{
+        columnaId: {
+            type: Sequelize.DataTypes.Type,
+            primaryKey: true,
+            autoIncrement: true
+        }
+        columna1: {
+            type: Sequelize.DataTypes.Type,
+            allowNull: true/false,
+            defaultValue: value
+        },
+        columna2: {},
+        columna3: {},
+        ...
+    },{
+        opciones extra de configuracion de tabla
+        freezeTableName: true/false (no pluraliza el nombre si esta en true)
+        timestamps: true/false (crea las columnas createdAt y updatedAt)
+    })
+
+### Sincronizar Modelos con DB
+
+    Table.sync({}) CREATE TABLE IF NOT EXISTS
+    Table.sync({ force:true }) DROP TABLE IF EXISTS, CREATE TABLE IF NOT EXISTS
+    Table.sync({ alter:true }) ALTER TABLE, ejecuta cambis en la tabla en la DB para matchear el modelo
+
+### Agregar datos a las tablas
+
+    Table.build() devuelve un objeto con los atributos de la tabla
+    Table.save() guarda los datos en la DB
+    Table.create() build y save juntos

@@ -9,6 +9,7 @@ import { TransactionForm } from "./TransactionForm";
 import { BudgetAlerts } from "./BudgetAlerts";
 import { formatCurrency, formatMonthYear } from "../utils/helpers";
 import styles from "./../styles/Dashboard.module.css";
+import { useTheme } from "../hooks/useTheme";
 
 type Tab = "dashboard" | "transactions" | "add" | "budgets";
 
@@ -54,6 +55,8 @@ export const Dashboard: React.FC = () => {
         setTab(editingTx ? "transactions" : "dashboard");
     };
 
+    const {theme, toggleTheme} = useTheme()
+
     return (
         <div className={styles.dashboard}>
             {/* NAV */}
@@ -84,9 +87,28 @@ export const Dashboard: React.FC = () => {
             {/* ── DASHBOARD ───────────────────────────────────────────────────────── */}
             {tab === "dashboard" && (
                 <div className={styles.content}>
-                    <h2 className={styles.heading}>
-                        {formatMonthYear(now.getFullYear(), now.getMonth() + 1)}
-                    </h2>
+                    <div className={styles.headingContainer}>
+                        <h2 className={styles.heading}>
+                            {formatMonthYear(now.getFullYear(), now.getMonth() + 1)}
+                        </h2>
+                        {/* ── THEME TOGGLE BUTTON ────────────────────────────────── */}
+                        <div className={styles.wrapper} onClick={toggleTheme}>
+                            <div
+                            className={`${styles.toggle} ${ theme === "dark" ? styles.toggleActive : ""
+                            }`}
+                            >
+                            <div
+                                className={`${styles.thumb} ${ theme === "dark" ? styles.thumbActive : ""
+                                }`}
+                            />
+                            </div>
+
+                            <span className={styles.icon}>
+                                {theme === "dark" ? "🌙" : "☀️"}
+                            </span>
+                        </div>
+                    </div>
+                    
 
                     {/* Stats row */}
                     <div className={styles.statsGrid}>
@@ -256,7 +278,7 @@ const BudgetsView: React.FC<{
                     return (
                         <div key={b.id} className={styles.budgetRow}>
                             <div className={styles.budgetHeader}>
-                                <span style={{ fontSize: 14, fontWeight: 500 }}>
+                                <span className={styles.budgetTitle}>
                                     {CATEGORY_ICONS[b.category]}{" "}
                                     {CATEGORY_LABELS[b.category]}
                                 </span>

@@ -17,6 +17,7 @@
 }
 
 .label {
+    color: var(--color-text-primary, #888);
     font-size: 14px;
     font-weight: 500;
 }

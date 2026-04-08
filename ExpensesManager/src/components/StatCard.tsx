@@ -21,7 +21,7 @@ export const StatCard: React.FC<StatCardProps> = ({
       ? "#1D9E75"
       : variant === "negative"
       ? "#D85A30"
-      : "inherit";
+      : "var(--color-text-primary)";
 
   return (
     <div className={styles.card}>
