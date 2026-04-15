@@ -1,0 +1,90 @@
+.wrapper {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.heading {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--color-text-primary);
+}
+
+.sub {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin:0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.label {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.input {
+  padding: 9px 12px;
+  border: 0.5px solid var(--color-border, #ddd);
+  border-radius: 8px;
+  background: var(--color-bg-primary, #fff);
+  color: inherit;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.12s;
+  color: var(--color-text-primary);
+}
+
+.inputError {
+  border-color: #d85a30;
+}
+
+.error {
+  font-size: 12px;
+  color: #d85a30;
+}
+
+.btnPrimary {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: var(--color-text-primary, #111);
+  color: var(--color-bg-primary, #fff);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.12s;
+}
+
+.switchRow {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.switchLink {
+  background: none;
+  border: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.hint {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  margin-top: -2px;
+}

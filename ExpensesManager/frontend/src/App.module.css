@@ -1,0 +1,117 @@
+@font-face {
+    font-family: "FiraSans";
+    src: url("/src/assets/fonts/FiraSans/FiraSans-Light.ttf") format("woff2");
+}
+
+.app {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    font-family: "FiraSans";
+}
+
+:root {
+    --color-bg-primary: #ffffff;
+    --color-bg-secondary: #f5f5f5;
+    --color-text-primary: #111111;
+    --color-text-secondary: #888888;
+    --color-border: #e5e5e5;
+    font-family: "FiraSans";
+}
+
+[data-theme="dark"] {
+    --color-bg-primary: #111111;
+    --color-bg-secondary: #1a1a1a;
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #aaaaaa;
+    --color-border: #333333;
+}
+
+[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}   
+
+.loading {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--color-border, #ddd);
+  border-top-color: var(--color-text-primary, #111);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.authPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 0.5px solid var(--color-border, #e5e5e5);
+  background: var(--color-bg-primary, #fff);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  width: 100%;
+}
+
+.logo {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.userRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.userName {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.logoutBtn {
+  padding: 5px 12px;
+  border: 0.5px solid var(--color-border, #ddd);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.main {
+  flex: 1;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+  width: 100%;
+}

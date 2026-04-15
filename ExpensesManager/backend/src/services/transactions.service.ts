@@ -1,4 +1,4 @@
-// src/services/transactions.service.ts
+// Todos los queries filtran por userId para aislar los datos de cada usuario.
 import { Prisma } from "@prisma/client";
 import { prisma } from "../lib/prisma";
 import type { z } from "zod";
@@ -12,9 +12,6 @@ type CreateInput = z.infer<typeof createTransactionSchema>;
 type UpdateInput = z.infer<typeof updateTransactionSchema>;
 type Filters = z.infer<typeof transactionFiltersSchema>;
 
-// ─── HELPERS ──────────────────────────────────────────────────────────────────
-
-/** Attach tags array to a transaction result */
 function formatTx(tx: any) {
   return {
     ...tx,
@@ -26,36 +23,41 @@ function formatTx(tx: any) {
 
 // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
-export async function createTransaction(data: CreateInput) {
+export async function createTransaction(userId: string, data: CreateInput) {
   const { tags, date, ...rest } = data;
-
   const tx = await prisma.transaction.create({
     data: {
       ...rest,
       date: new Date(date),
-      tags: {
-        create: tags.map((tag) => ({ tag })),
-      },
+      userId,
+      tags: { create: tags.map((tag) => ({ tag })) },
     },
     include: { tags: true },
   });
-
   return formatTx(tx);
 }
 
-export async function getTransactionById(id: string) {
-  const tx = await prisma.transaction.findUnique({
-    where: { id },
+export async function getTransactionById(userId: string, id: string) {
+  const tx = await prisma.transaction.findFirst({
+    where: { id, userId },
     include: { tags: true },
   });
-  if (!tx) return null;
-  return formatTx(tx);
+  return tx ? formatTx(tx) : null;
 }
 
-export async function updateTransaction(id: string, data: UpdateInput) {
+export async function updateTransaction(
+  userId: string,
+  id: string,
+  data: UpdateInput,
+) {
+  // Verify ownership first
+  const existing = await prisma.transaction.findFirst({
+    where: { id, userId },
+  });
+  if (!existing) return null;
+
   const { tags, date, ...rest } = data;
 
-  // Replace tags in a single transaction
   const tx = await prisma.$transaction(async (db) => {
     if (tags !== undefined) {
       await db.transactionTag.deleteMany({ where: { transactionId: id } });
@@ -63,13 +65,9 @@ export async function updateTransaction(id: string, data: UpdateInput) {
         data: tags.map((tag) => ({ tag, transactionId: id })),
       });
     }
-
     return db.transaction.update({
       where: { id },
-      data: {
-        ...rest,
-        ...(date ? { date: new Date(date) } : {}),
-      },
+      data: { ...rest, ...(date ? { date: new Date(date) } : {}) },
       include: { tags: true },
     });
   });
@@ -77,19 +75,34 @@ export async function updateTransaction(id: string, data: UpdateInput) {
   return formatTx(tx);
 }
 
-export async function deleteTransaction(id: string) {
+export async function deleteTransaction(userId: string, id: string) {
+  const existing = await prisma.transaction.findFirst({
+    where: { id, userId },
+  });
+  if (!existing) return false;
   await prisma.transaction.delete({ where: { id } });
+  return true;
 }
 
-// ─── LIST WITH FILTERS ────────────────────────────────────────────────────────
+// ─── LIST ─────────────────────────────────────────────────────────────────────
 
-export async function listTransactions(filters: Filters) {
+export async function listTransactions(userId: string, filters: Filters) {
   const {
-    type, category, dateFrom, dateTo, amountMin, amountMax,
-    search, page, pageSize, sortField, sortDir,
+    type,
+    category,
+    dateFrom,
+    dateTo,
+    amountMin,
+    amountMax,
+    search,
+    page,
+    pageSize,
+    sortField,
+    sortDir,
   } = filters;
 
   const where: Prisma.TransactionWhereInput = {
+    userId,
     ...(type && { type }),
     ...(category && { category }),
     ...(dateFrom || dateTo
@@ -121,10 +134,10 @@ export async function listTransactions(filters: Filters) {
     sortField === "date"
       ? { date: sortDir }
       : sortField === "amount"
-      ? { amount: sortDir }
-      : sortField === "description"
-      ? { description: sortDir }
-      : { category: sortDir };
+        ? { amount: sortDir }
+        : sortField === "description"
+          ? { description: sortDir }
+          : { category: sortDir };
 
   const [total, rows] = await prisma.$transaction([
     prisma.transaction.count({ where }),

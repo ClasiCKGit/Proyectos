@@ -182,7 +182,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
         </div>
 
         {/* Category */}
-        <div className={styles.field}>
+        <div className={`${form.type === "expense" ? styles.field : styles.none}`}>
           <label className={styles.label}>Categoría</label>
           <select
           className={styles.input}
@@ -229,7 +229,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
         </div>
 
         {/* Notes */}
-        <div className={styles.field}>
+        <div className={styles.field} style={form.type !== "expense" ? {gridColumn: "1 / -1"} : {}}>
           <label className={styles.label}>Notas</label>
           <input
           className={styles.input}

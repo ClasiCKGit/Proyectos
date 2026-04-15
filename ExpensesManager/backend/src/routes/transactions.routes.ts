@@ -1,4 +1,4 @@
-// src/routes/transactions.routes.ts
+// src/routes/transactions.routes.ts  (versión con auth)
 import { Router } from "express";
 import {
   createTransactionSchema,
@@ -7,54 +7,72 @@ import {
 } from "../schemas";
 import * as svc from "../services/transactions.service";
 import { validate, validateQuery } from "../middleware/validate";
+import { requireAuth } from "../middleware/auth";
 
 export const transactionsRouter = Router();
 
-// GET /transactions
-transactionsRouter.get("/", validateQuery(transactionFiltersSchema), async (req, res, next) => {
-  try {
-    const result = await svc.listTransactions(req.query as any);
-    res.json(result);
-  } catch (err) {
-    next(err);
-  }
-});
+// All transaction routes require authentication
+transactionsRouter.use(requireAuth);
 
-// GET /transactions/:id
+transactionsRouter.get(
+  "/",
+  validateQuery(transactionFiltersSchema),
+  async (req, res, next) => {
+    try {
+      res.json(await svc.listTransactions(req.user!.id, req.query as any));
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
 transactionsRouter.get("/:id", async (req, res, next) => {
   try {
-    const tx = await svc.getTransactionById(req.params.id);
-    if (!tx) return res.status(404).json({ message: "Transacción no encontrada" });
+    const tx = await svc.getTransactionById(req.user!.id, req.params.id);
+    if (!tx)
+      return res.status(404).json({ message: "Transacción no encontrada" });
     res.json(tx);
   } catch (err) {
     next(err);
   }
 });
 
-// POST /transactions
-transactionsRouter.post("/", validate(createTransactionSchema), async (req, res, next) => {
-  try {
-    const tx = await svc.createTransaction(req.body);
-    res.status(201).json(tx);
-  } catch (err) {
-    next(err);
-  }
-});
+transactionsRouter.post(
+  "/",
+  validate(createTransactionSchema),
+  async (req, res, next) => {
+    try {
+      res.status(201).json(await svc.createTransaction(req.user!.id, req.body));
+    } catch (err) {
+      next(err);
+    }
+  },
+);
 
-// PATCH /transactions/:id
-transactionsRouter.patch("/:id", validate(updateTransactionSchema), async (req, res, next) => {
-  try {
-    const tx = await svc.updateTransaction(req.params.id, req.body);
-    res.json(tx);
-  } catch (err) {
-    next(err);
-  }
-});
+transactionsRouter.patch(
+  "/:id",
+  validate(updateTransactionSchema),
+  async (req, res, next) => {
+    try {
+      const tx = await svc.updateTransaction(
+        req.user!.id,
+        req.params.id,
+        req.body,
+      );
+      if (!tx)
+        return res.status(404).json({ message: "Transacción no encontrada" });
+      res.json(tx);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
 
-// DELETE /transactions/:id
 transactionsRouter.delete("/:id", async (req, res, next) => {
   try {
-    await svc.deleteTransaction(req.params.id);
+    const deleted = await svc.deleteTransaction(req.user!.id, req.params.id);
+    if (!deleted)
+      return res.status(404).json({ message: "Transacción no encontrada" });
     res.status(204).send();
   } catch (err) {
     next(err);

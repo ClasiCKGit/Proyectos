@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "prettier":{
-    "tabWidth": 2,
+    "tabWidth": 4,
     "semi": true
   },
   "scripts": {

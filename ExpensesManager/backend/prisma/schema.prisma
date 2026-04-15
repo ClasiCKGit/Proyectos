@@ -1,30 +1,63 @@
-// prisma/schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "mysql"
+  //url      = env("DATABASE_URL")  Por alguna razon tira error el VS con esta linea pero los comandos de primsa corren igual
 }
 
+// ─── AUTH ─────────────────────────────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique @db.VarChar(255)
+  passwordHash String   @db.VarChar(255)
+  name         String   @db.VarChar(100)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  transactions Transaction[]
+  budgets      Budget[]
+  savingsGoals SavingsGoal[]
+  refreshTokens RefreshToken[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique @db.VarChar(512)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+// ─── EXPENSE MANAGER ─────────────────────────────────────────────────────────
+
 model Transaction {
-  id          String   @id @default(uuid())
+  id          String         @id @default(uuid())
   type        TransactionType
-  amount      Decimal  @db.Decimal(12, 2)
-  description String   @db.VarChar(100)
+  amount      Decimal        @db.Decimal(12, 2)
+  description String         @db.VarChar(100)
   category    Category
-  date        DateTime @db.Date
-  notes       String?  @db.Text
+  date        DateTime       @db.Date
+  notes       String?        @db.Text
   recurrence  RecurrenceType @default(none)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  userId      String
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
 
   tags        TransactionTag[]
 
-  @@index([date])
-  @@index([type])
-  @@index([category])
+  @@index([userId, date])
+  @@index([userId, type])
+  @@index([userId, category])
   @@map("transactions")
 }
 
@@ -39,13 +72,16 @@ model TransactionTag {
 }
 
 model Budget {
-  id        String        @id @default(uuid())
-  category  Category      @unique
-  limit     Decimal       @db.Decimal(12, 2)
-  period    BudgetPeriod  @default(monthly)
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  id        String       @id @default(uuid())
+  category  Category
+  limit     Decimal      @db.Decimal(12, 2)
+  period    BudgetPeriod @default(monthly)
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 
+  @@unique([userId, category])
   @@map("budgets")
 }
 
@@ -55,11 +91,15 @@ model SavingsGoal {
   targetAmount  Decimal   @db.Decimal(12, 2)
   currentAmount Decimal   @db.Decimal(12, 2) @default(0)
   deadline      DateTime? @db.Date
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
   @@map("savings_goals")
 }
+
+// ─── ENUMS ────────────────────────────────────────────────────────────────────
 
 enum TransactionType {
   income
