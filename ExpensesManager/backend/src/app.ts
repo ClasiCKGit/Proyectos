@@ -4,7 +4,9 @@ import cors from "cors";
 import helmet from "helmet";
 import { authRouter } from "./routes/auth.routes";
 import { transactionsRouter } from "./routes/transactions.routes";
-import { budgetsRouter, savingsGoalsRouter, statsRouter } from "./routes/other.routes";
+import { budgetsRouter} from "./routes/budgets.routes"
+import { savingsGoalsRouter } from "./routes/savingGoals.routes"
+import { statsRouter } from "./routes/stats.routes";
 import { requireAuth } from "./middleware/auth";
 import { errorHandler } from "./middleware/errorHandler";
 

@@ -28,7 +28,7 @@ export interface Transaction {
 }
 
 export interface Budget {
-  id: string;
+  id: string | undefined;
   category: Category;
   limit: number;
   period: "monthly" | "yearly";

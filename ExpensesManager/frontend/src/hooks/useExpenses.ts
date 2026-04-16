@@ -105,7 +105,7 @@ export function useExpenses() {
     return b;
   }, [refreshStats]);
 
-  const removeBudget = useCallback(async (id: string) => {
+  const removeBudget = useCallback(async (id: string | undefined) => {
     await budgetsApi.remove(id);
     setBudgets((prev) => prev.filter((b) => b.id !== id));
     await refreshStats();

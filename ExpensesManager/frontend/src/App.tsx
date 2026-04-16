@@ -57,7 +57,7 @@ export default function App() {
 
       {/* Main content */}
       <main className={styles.main}>
-        <Dashboard />
+        <Dashboard/>
       </main>
     </div>
   );

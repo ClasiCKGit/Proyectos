@@ -15,12 +15,12 @@ function monthRange(year: number, month: number) {
   return { from, to };
 }
 
-async function aggregateMonth(year: number, month: number) {
+async function aggregateMonth(userId:string, year: number, month: number, ) {
   const { from, to } = monthRange(year, month);
 
   const rows = await prisma.transaction.groupBy({
     by: ["type", "category"],
-    where: { date: { gte: from, lte: to } },
+    where: { date: { gte: from, lte: to }, userId: userId },
     _sum: { amount: true },
     _count: true,
   });
@@ -47,21 +47,21 @@ async function aggregateMonth(year: number, month: number) {
 
 // ─── EXPORTS ──────────────────────────────────────────────────────────────────
 
-export async function getMonthlyStats(year: number, month: number) {
-  return aggregateMonth(year, month);
+export async function getMonthlyStats(userId:string, year: number, month: number) {
+  return aggregateMonth(userId, year, month);
 }
 
-export async function getLast12MonthsStats() {
+export async function getLast12MonthsStats(userId:string) {
   const now = new Date();
   const promises = Array.from({ length: 12 }, (_, i) => {
     const d = new Date(now.getFullYear(), now.getMonth() - 11 + i, 1);
-    return aggregateMonth(d.getFullYear(), d.getMonth() + 1);
+    return aggregateMonth(userId,d.getFullYear(), d.getMonth() + 1);
   });
   return Promise.all(promises);
 }
 
-export async function getTopCategories(year: number, month: number, limit = 5) {
-  const stats = await aggregateMonth(year, month);
+export async function getTopCategories(userId:string, year: number, month: number, limit = 5) {
+  const stats = await aggregateMonth(userId, year, month);
   const total = stats.totalExpenses || 1;
 
   return Object.entries(stats.byCategory)
@@ -74,9 +74,9 @@ export async function getTopCategories(year: number, month: number, limit = 5) {
     .slice(0, limit);
 }
 
-export async function checkBudgetAlerts(year: number, month: number) {
+export async function checkBudgetAlerts(userId:string, year: number, month: number) {
   const [stats, budgets] = await Promise.all([
-    aggregateMonth(year, month),
+    aggregateMonth(userId, year, month),
     prisma.budget.findMany({ where: { period: "monthly" } }),
   ]);
 
@@ -97,13 +97,13 @@ export async function checkBudgetAlerts(year: number, month: number) {
     .sort((a, b) => b.percentage - a.percentage);
 }
 
-export async function getMonthOverMonthChange() {
+export async function getMonthOverMonthChange(userId:string) {
   const now = new Date();
   const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 
   const [curr, last] = await Promise.all([
-    aggregateMonth(now.getFullYear(), now.getMonth() + 1),
-    aggregateMonth(prev.getFullYear(), prev.getMonth() + 1),
+    aggregateMonth(userId, now.getFullYear(), now.getMonth() + 1),
+    aggregateMonth(userId, prev.getFullYear(), prev.getMonth() + 1),
   ]);
 
   const pct = (c: number, p: number) =>
@@ -116,25 +116,25 @@ export async function getMonthOverMonthChange() {
   };
 }
 
-export async function getSavingsRate(year: number, month: number) {
-  const stats = await aggregateMonth(year, month);
+export async function getSavingsRate(userId:string, year: number, month: number) {
+  const stats = await aggregateMonth(userId, year, month);
   if (stats.totalIncome === 0) return 0;
   return ((stats.totalIncome - stats.totalExpenses) / stats.totalIncome) * 100;
 }
 
-export async function getFullDashboard() {
+export async function getFullDashboard(userId:string) {
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth() + 1;
 
   const [currentMonth, last12Months, topCategories, budgetAlerts, monthOverMonth, savingsRate] =
     await Promise.all([
-      getMonthlyStats(year, month),
-      getLast12MonthsStats(),
-      getTopCategories(year, month),
-      checkBudgetAlerts(year, month),
-      getMonthOverMonthChange(),
-      getSavingsRate(year, month),
+      getMonthlyStats(userId, year, month),
+      getLast12MonthsStats(userId, ),
+      getTopCategories(userId, year, month),
+      checkBudgetAlerts(userId, year, month),
+      getMonthOverMonthChange(userId, ),
+      getSavingsRate(userId, year, month),
     ]);
 
   return { currentMonth, last12Months, topCategories, budgetAlerts, monthOverMonth, savingsRate };

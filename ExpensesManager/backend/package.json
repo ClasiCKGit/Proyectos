@@ -1,6 +1,10 @@
 {
   "name": "expense-manager-api",
   "version": "1.0.0",
+  "prettier":{
+    "tabWidth": 4,
+    "semi": true
+  },
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",

@@ -97,7 +97,7 @@ export const transactionsApi = {
 export const budgetsApi = {
   list: () => request<any[]>("/budgets"),
   upsert: (body: unknown) => request<any>("/budgets", { method: "PUT", body: JSON.stringify(body) }),
-  remove: (id: string) => request<void>(`/budgets/${id}`, { method: "DELETE" }),
+  remove: (id: string|undefined) => request<void>(`/budgets/${id}`, { method: "DELETE" }),
 };
 
 export const savingsGoalsApi = {

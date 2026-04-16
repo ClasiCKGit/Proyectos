@@ -40,6 +40,7 @@ export const transactionFiltersSchema = z.object({
 // ─── BUDGETS ──────────────────────────────────────────────────────────────────
 
 export const upsertBudgetSchema = z.object({
+  userId: z.string().optional(), // Provided by backend from auth token
   category: CategoryEnum,
   limit: z.number().positive("El límite debe ser mayor a 0"),
   period: z.enum(["monthly", "yearly"]).default("monthly"),
