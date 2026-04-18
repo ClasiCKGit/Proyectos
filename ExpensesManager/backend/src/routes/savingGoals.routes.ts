@@ -11,7 +11,7 @@ export const savingsGoalsRouter = R2();
 
 savingsGoalsRouter.get("/", async (_req, res, next) => {
     try {
-        res.json(await goalSvc.listSavingsGoals());
+        res.json(await goalSvc.listSavingsGoals(_req.user!.id));
     } catch (e) {
         next(e);
     }

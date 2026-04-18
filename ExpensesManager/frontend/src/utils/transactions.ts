@@ -1,9 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import type {
   Transaction,
-  TransactionType,
-  Category,
-  RecurrenceType,
   FilterOptions,
   SortOptions,
   PaginationOptions,
@@ -13,7 +10,7 @@ import type {
 // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
 export function createTransaction(
-  params: Omit<Transaction, "id" | "createdAt" | "updatedAt">
+  params: Omit<Transaction, "createdAt" | "updatedAt">
 ): Transaction {
   const now = new Date().toISOString();
   return {

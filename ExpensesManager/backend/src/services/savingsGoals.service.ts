@@ -15,15 +15,23 @@ function fmt(g: any) {
   };
 }
 
-export async function listSavingsGoals() {
-  const rows = await prisma.savingsGoal.findMany({ orderBy: { createdAt: "asc" } });
+export async function listSavingsGoals(userId:string) {
+  const rows = await prisma.savingsGoal.findMany({ 
+    where:{ userId },
+    orderBy: { createdAt: "asc" } 
+  });
   return rows.map(fmt);
 }
 
 export async function createSavingsGoal(data: CreateInput) {
+  const userId = data.userId;
+  if (!userId) {
+    throw new Error("userId es requerido");
+  }
   const result = await prisma.savingsGoal.create({
     data: {
       ...data,
+      userId,
       deadline: data.deadline ? new Date(data.deadline) : null,
     },
   });

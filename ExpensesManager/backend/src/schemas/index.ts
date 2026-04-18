@@ -49,6 +49,7 @@ export const upsertBudgetSchema = z.object({
 // ─── SAVINGS GOALS ────────────────────────────────────────────────────────────
 
 export const createSavingsGoalSchema = z.object({
+  userId: z.string().optional(), // Provided by backend from auth token
   name: z.string().min(1).max(100),
   targetAmount: z.number().positive(),
   currentAmount: z.number().nonnegative().default(0),

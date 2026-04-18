@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import type { Transaction, FilterOptions, SortOptions } from "../types";
+import type { Transaction } from "../types";
 import {
   CATEGORY_ICONS,
   CATEGORY_LABELS,
-  CATEGORY_COLORS,
   formatCurrency,
   formatRelativeDate,
 } from "../utils/helpers";

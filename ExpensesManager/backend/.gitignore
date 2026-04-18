@@ -1,0 +1,7 @@
+# Secretos — NUNCA al repo
+.env
+.env.local
+.env.production
+
+# Dependencias
+node_modules/

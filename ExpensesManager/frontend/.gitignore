@@ -7,7 +7,14 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
+
+# Secretos — NUNCA al repo
+.env
+.env.local
+.env.production
+
+# Dependencias
+node_modules/
 dist
 dist-ssr
 *.local
