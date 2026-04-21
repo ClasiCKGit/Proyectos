@@ -67,11 +67,16 @@ services:
       - backend
     environment:
       VITE_API_URL: http://localhost:3000/api
+      WATCHPACK_POLLING: "1000"
+      CHOKIDAR_USEPOLLING: "true"
+      CHOKIDAR_INTERVAL: "1000"
     ports:
       - "5173:5173"
     volumes:
-      - ./frontend/src:/app/src         # hot-reload
-    command: npm run dev -- --host 0.0.0.0
+      - ./frontend/src:/app/src:cached
+      - ./frontend/index.html:/app/index.html:cached
+      - ./frontend/vite.config.ts:/app/vite.config.ts:cached
+      - ./frontend/public:/app/public:cached
 
 volumes:
   mysql_data:

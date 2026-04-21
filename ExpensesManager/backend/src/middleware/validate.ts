@@ -10,7 +10,7 @@ export function validate(schema: ZodSchema) {
       return res.status(400).json({
         message: "Datos inválidos",
         errors: result.error.errors.map((e) => ({
-          field: e.path.join("."),
+          field: e.path.join(".") || "root",
           message: e.message,
         })),
       });

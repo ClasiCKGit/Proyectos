@@ -17,17 +17,16 @@ savingsGoalsRouter.get("/", async (_req, res, next) => {
     }
 });
 
-savingsGoalsRouter.post(
-    "/",
-    v(createSavingsGoalSchema),
-    async (req, res, next) => {
-        try {
-            res.status(201).json(await goalSvc.createSavingsGoal(req.body));
-        } catch (e) {
-            next(e);
+savingsGoalsRouter.post("/", v(createSavingsGoalSchema), async (req, res, next) => {
+    try {
+        if (!req.user?.id) {
+            return res.status(401).json({ message: "Usuario no autenticado" });
         }
-    },
-);
+        res.status(201).json(await goalSvc.createSavingsGoal({...req.body, userId: req.user.id}));
+    } catch (e) {
+        next(e);
+    }
+});
 
 savingsGoalsRouter.patch(
     "/:id",

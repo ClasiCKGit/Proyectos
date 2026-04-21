@@ -108,7 +108,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
                   {tx.tags.length > 0 && (
                     <span className={styles.tagRow}>
                       {tx.tags.map((tag) => (
-                        <span key={tag} className={styles.tag}>{tag}</span>
+                        <span key={tag+1} className={styles.tag}>{tag}</span>
                       ))}
                     </span>
                   )}

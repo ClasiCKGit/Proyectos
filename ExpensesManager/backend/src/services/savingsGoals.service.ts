@@ -25,17 +25,24 @@ export async function listSavingsGoals(userId:string) {
 
 export async function createSavingsGoal(data: CreateInput) {
   const userId = data.userId;
-  if (!userId) {
-    throw new Error("userId es requerido");
+  if (!userId || typeof userId !== 'string') {
+    throw new Error("userId es requerido y debe ser válido");
   }
-  const result = await prisma.savingsGoal.create({
-    data: {
-      ...data,
-      userId,
-      deadline: data.deadline ? new Date(data.deadline) : null,
-    },
-  });
-  return fmt(result);
+  
+  try {
+    const result = await prisma.savingsGoal.create({
+      data: {
+        name: data.name,
+        targetAmount: String(data.targetAmount),
+        currentAmount: String(data.currentAmount),
+        deadline: data.deadline ? new Date(data.deadline) : null,
+        userId,
+      },
+    });
+    return fmt(result);
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function updateSavingsGoal(id: string, data: UpdateInput) {

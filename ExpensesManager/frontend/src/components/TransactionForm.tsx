@@ -9,7 +9,7 @@ import {
 } from "../utils/helpers";
 import styles from './../styles/TransactionForm.module.css'
 
-type FormState = {
+export type FormState = {
   type: "expense" | "income";
   amount: string;
   description: string;
