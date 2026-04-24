@@ -19,6 +19,7 @@ export const createTransactionSchema = z.object({
   tags: z.array(z.string().max(50)).max(10).default([]),
   notes: z.string().max(500).optional(),
   recurrence: RecurrenceEnum.default("none"),
+  savingsGoalId: z.string().optional()
 });
 
 export const updateTransactionSchema = createTransactionSchema.partial();

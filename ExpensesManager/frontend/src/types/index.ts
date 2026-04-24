@@ -23,6 +23,7 @@ export interface Transaction {
   tags: string[];
   recurrence: RecurrenceType;
   notes?: string;
+  savingsGoalId?: string
   createdAt: string;
   updatedAt: string;
 }

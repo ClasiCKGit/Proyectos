@@ -59,6 +59,7 @@ export function useExpenses() {
     try {
       const s = await statsApi.dashboard();
       setStats(s);
+      console.log("refresheando")
     } catch { /* silently fail */ }
   }, []);
 
@@ -122,20 +123,25 @@ export function useExpenses() {
         const idx = prev.findIndex((g) => g.id === goal.id);
         return idx >= 0 ? prev.map((g) => (g.id === goal.id ? goal : g)) : [...prev, goal];
       });
+      await refreshStats();
       return goal;
-    }, []
+    }, [refreshStats]
   );
 
   const removeSavingsGoal = useCallback(async (id: string) => {
     await savingsGoalsApi.remove(id);
     setSavingsGoals((prev) => prev.filter((g) => g.id !== id));
-  }, []);
+    let txResult = await transactionsApi.list({ pageSize: 100, sortField: "date", sortDir: "desc" });
+    setTransactions(txResult.data ?? []);
+    await refreshStats();
+  }, [refreshStats]);
 
   const contributeSavingsGoal = useCallback(async (id: string, amount: number) => {
     const goal = await savingsGoalsApi.contribute(id, amount);
     setSavingsGoals((prev) => prev.map((g) => (g.id === id ? goal : g)));
+    await refreshStats();
     return goal;
-  }, []);
+  }, [refreshStats]);
 
   return {
     // State
@@ -157,5 +163,6 @@ export function useExpenses() {
     removeSavingsGoal,
     contributeSavingsGoal,
     reload: loadAll,
+    refreshStats
   };
 }

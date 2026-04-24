@@ -85,7 +85,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
         ) : (
           items.map((tx) => (
             <div
-              key={tx.id}
+              key={`item${tx.id}`}
               className={styles.item}
               onClick={() => onEdit?.(tx)}
               role={onEdit ? "button" : undefined}
@@ -108,7 +108,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
                   {tx.tags.length > 0 && (
                     <span className={styles.tagRow}>
                       {tx.tags.map((tag) => (
-                        <span key={tag+1} className={styles.tag}>{tag}</span>
+                        <span key={`tag${tag}`} className={styles.tag}>{tag}</span>
                       ))}
                     </span>
                   )}

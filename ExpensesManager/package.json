@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "dev": "docker compose up --build",
+        "dev": "docker compose build --no-cache && docker compose up",
         "down": "docker compose down",
         "migrate": "docker compose exec backend npx prisma migrate dev",
         "logs": "docker compose logs -f"

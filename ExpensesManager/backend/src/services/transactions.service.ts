@@ -76,12 +76,26 @@ export async function updateTransaction(
 }
 
 export async function deleteTransaction(userId: string, id: string) {
-  const existing = await prisma.transaction.findFirst({
-    where: { id, userId },
-  });
-  if (!existing) return false;
-  await prisma.transaction.delete({ where: { id } });
-  return true;
+  return await prisma.$transaction(async (db) => {
+    const tx = await prisma.transaction.findFirst({
+      where: { id, userId },
+    });
+    if (!tx) return false;
+
+    if (tx.savingsGoalId) {
+      await prisma.savingsGoal.update({
+        where: { id: tx.savingsGoalId },
+        data: {
+          currentAmount: {
+            decrement: new Prisma.Decimal(tx.amount),
+          },
+        },
+      });
+    }
+
+    await prisma.transaction.delete({ where: { id } });
+    return true;
+  })
 }
 
 // ─── LIST ─────────────────────────────────────────────────────────────────────

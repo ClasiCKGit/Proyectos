@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import type { SavingsGoal, Transaction } from "../types";
+import type { SavingsGoal, Transaction, Budget } from "../types";
 import { useExpenses } from "../hooks/useExpenses";
 import { StatCard } from "./StatCard";
 import { MonthlyBarChart } from "./MonthlyBarChart";
@@ -17,9 +17,16 @@ export const Dashboard: React.FC = () => {
     const {
         transactions,
         stats,
+        savingsGoals,
+        budgets,
         addTransaction,
         editTransaction,
         removeTransaction,
+        upsertSavingsGoal,
+        contributeSavingsGoal,
+        removeSavingsGoal,
+        upsertBudget,
+        removeBudget,
     } = useExpenses();
 
     const [tab, setTab] = useState<Tab>("dashboard");
@@ -236,10 +243,25 @@ export const Dashboard: React.FC = () => {
             )}
 
             {/* ── BUDGETS ──────────────────────────────────────────────────────────── */}
-            {tab === "budgets" && <BudgetsView stats={stats} />}
+            {tab === "budgets" && (
+                <BudgetsView
+                    stats={stats}
+                    budgets={budgets}
+                    upsert={upsertBudget}
+                    remove={removeBudget}
+                />
+            )}
 
             {/* ── SAVING GOALS ─────────────────────────────────────────────────────── */}
-            {tab === "savGoals" && <SavingGoalsView stats={stats} setTab={setTab}/>}
+            {tab === "savGoals" && (
+                <SavingGoalsView
+                    addTransaction={addTransaction}
+                    upsert={upsertSavingsGoal}
+                    contribute={contributeSavingsGoal}
+                    remove={removeSavingsGoal}
+                    savingsGoals={savingsGoals}
+                />
+            )}
         </div>
     );
 };
@@ -251,8 +273,10 @@ import { CATEGORY_ICONS, CATEGORY_LABELS } from "../utils/helpers";
 
 const BudgetsView: React.FC<{
     stats: ReturnType<typeof useExpenses>["stats"];
-}> = ({ stats }) => {
-    const { budgets, upsertBudget, removeBudget } = useExpenses();
+    budgets: Budget[];
+    upsert: (data: Omit<Budget, "id" | "createdAt">) => Promise<any>;
+    remove: (id: string | undefined) => Promise<void>;
+}> = ({ stats, budgets, upsert, remove }) => {
     const [category, setCategory] = useState<Category>("food");
     const [limit, setLimit] = useState("");
 
@@ -262,7 +286,7 @@ const BudgetsView: React.FC<{
     const handleAdd = () => {
         const limitNum = parseFloat(limit);
         if (!category || !limitNum || limitNum <= 0) return;
-        upsertBudget({ category, limit: limitNum, period: "monthly" });
+        upsert({ category, limit: limitNum, period: "monthly" });
         setLimit("");
     };
 
@@ -312,7 +336,7 @@ const BudgetsView: React.FC<{
                                     </span>
                                     <button
                                         className={styles.removeBtn}
-                                        onClick={() => removeBudget(b.id)}
+                                        onClick={() => remove(b.id)}
                                     >
                                         ✕
                                     </button>
@@ -327,8 +351,8 @@ const BudgetsView: React.FC<{
                                             pct >= 100
                                                 ? "#D85A30"
                                                 : pct >= 80
-                                                  ? "#BA7517"
-                                                  : "#1D9E75",
+                                                    ? "#BA7517"
+                                                    : "#1D9E75",
                                     }}
                                 />
                             </div>
@@ -380,63 +404,77 @@ const BudgetsView: React.FC<{
 };
 
 const SavingGoalsView: React.FC<{
-    stats: ReturnType<typeof useExpenses>["stats"];
-    setTab: (value:Tab) => void
-}> = ({ stats, setTab }) => {    
-    const emptySv:SavingsGoal = {
-      id: "",
-      name: "",
-      currentAmount: 0,
-      targetAmount: 0,
-      deadline: "",
-      createdAt:"",
-    }
+    addTransaction: (
+        data: Omit<Transaction, "id" | "createdAt" | "updatedAt">,
+    ) => Promise<any>;
+    upsert: (
+        data: Omit<SavingsGoal, "id" | "createdAt"> & { id?: string },
+    ) => Promise<any>;
+    contribute: (id: string, amount: number) => Promise<any>;
+    remove: (id: string) => Promise<void>;
+    savingsGoals: SavingsGoal[];
+}> = ({ addTransaction, upsert, contribute, remove, savingsGoals }) => {
+    const emptySv: SavingsGoal = {
+        id: "",
+        name: "",
+        currentAmount: 0,
+        targetAmount: 0,
+        deadline: "",
+        createdAt: "",
+    };
 
     const now = new Date();
     const nextWeek = new Date(now);
     nextWeek.setDate(nextWeek.getDate() + 7);
     const defaultDeadline = nextWeek.toISOString().split("T")[0];
-    
-    const { savingsGoals, upsertSavingsGoal, removeSavingsGoal, contributeSavingsGoal,addTransaction } = useExpenses();
+
     const [deadline, setDeadline] = useState<string>(defaultDeadline);
     const [name, setName] = useState<string>("");
-    const [targetAmount, setTargetAmount] = useState("")
-    const [svSelected, setSvSelected] = useState<SavingsGoal>(emptySv)
-    const [amount, setAmount] = useState("")
-
-    const cats = stats.currentMonth.byCategory;
+    const [targetAmount, setTargetAmount] = useState("");
+    const [svSelected, setSvSelected] = useState<SavingsGoal>(emptySv);
+    const [amount, setAmount] = useState("");
 
     const handleAdd = () => {
-      const currentAmount = 0
-      const targetAmountNum = parseFloat(targetAmount)
+        const currentAmount = 0;
+        const targetAmountNum = parseFloat(targetAmount);
 
-      if (!deadline || !name || !targetAmount || targetAmountNum <= 0) {
-        return;
-      }
-      const formatName = name[0].toUpperCase() + name.slice(1)
-      upsertSavingsGoal({ name:formatName, currentAmount, targetAmount: targetAmountNum, deadline });
-      setName("");
-      setTargetAmount("");
+        if (!deadline || !name || !targetAmount || targetAmountNum <= 0) {
+            return;
+        }
+        const formatName = name[0].toUpperCase() + name.slice(1);
+        upsert({
+            name: formatName,
+            currentAmount,
+            targetAmount: targetAmountNum,
+            deadline,
+        });
+        setName("");
+        setTargetAmount("");
     };
 
     const handleContribute = () => {
-      const amountNum = parseFloat(amount)
-      const data: Omit<Transaction, "id" | "createdAt" | "updatedAt">= {
-          type: "expense",
-          category: "savings",
-          amount: amountNum,
-          description: "contribución a NAME",
-          date: now.toISOString().split("T")[0],
-          tags:["",""],
-          notes: "",
-          recurrence: "none",
-      }
-      contributeSavingsGoal(svSelected.id, amountNum)
-      addTransaction(data)
-      setTab("transactions")
-      setSvSelected(emptySv)
-      setAmount("")
-    }
+        const amountNum = parseFloat(amount);
+        const data: Omit<Transaction, "id" | "createdAt" | "updatedAt"> = {
+            type: "expense",
+            category: "savings",
+            amount: amountNum,
+            description: `Contribución a ${svSelected.name}`,
+            date: now.toISOString().split("T")[0],
+            tags: ["Contribucion", `${svSelected.name}`],
+            notes: "",
+            recurrence: "none",
+            savingsGoalId: svSelected.id,
+        };
+        contribute(svSelected.id, amountNum);
+        addTransaction(data);
+        setSvSelected(emptySv);
+        setAmount("");
+    };
+
+    const handleDelete = async (svId: string) => {
+        await remove(svId);
+        setSvSelected(emptySv);
+    };
 
     return (
         <div className={styles.content}>
@@ -457,13 +495,15 @@ const SavingGoalsView: React.FC<{
                     </p>
                 )}
                 {savingsGoals.map((s) => {
-                    const pct = s.currentAmount > 0 ? (s.currentAmount / s.targetAmount) * 100 : 0;
+                    const pct =
+                        s.currentAmount > 0
+                            ? (s.currentAmount / s.targetAmount) * 100
+                            : 0;
                     return (
                         <div key={s.id} className={styles.budgetRow}>
                             <div className={styles.budgetHeader}>
                                 <span className={styles.budgetTitle}>
-                                    {CATEGORY_ICONS["savings"]}{" "}
-                                    {s.name}
+                                    {CATEGORY_ICONS["savings"]} {s.name}
                                 </span>
                                 <div
                                     style={{
@@ -483,7 +523,7 @@ const SavingGoalsView: React.FC<{
                                     </span>
                                     <button
                                         className={styles.removeBtn}
-                                        onClick={() => removeSavingsGoal(s.id)}
+                                        onClick={() => handleDelete(s.id)}
                                     >
                                         ✕
                                     </button>
@@ -522,26 +562,41 @@ const SavingGoalsView: React.FC<{
                 })}
             </div>
 
-            {svSelected.id !== "" && <div className={styles.card}>
-                <p className={styles.cardTitle}>Contribuir a {svSelected.name} </p>
-                <div className={styles.addBudgetRow}> 
-                    <input 
-                        type="number" 
-                        style={{flex:1}}
-                        className={styles.input}
-                        placeholder="$$$$"
-                        value={amount}
-                        onChange={(e) =>{
-                          setAmount(e.target.value)
-                        }}
+            {svSelected.id !== "" && (
+                <div className={styles.card}>
+                    <p className={styles.cardTitle}>
+                        Contribuir a {svSelected.name}{" "}
+                    </p>
+                    <div className={styles.addBudgetRow}>
+                        <input
+                            type="number"
+                            style={{ flex: 1 }}
+                            className={styles.input}
+                            placeholder="$$$$"
+                            value={amount}
+                            onChange={(e) => {
+                                setAmount(e.target.value);
+                            }}
                         />
-                    <button className={styles.btnPrimary} onClick={handleContribute}>Guardar</button>
-                    <button className={styles.btnPrimary} style={{color: "#d85a30"}} onClick={() => {
-                      setSvSelected(emptySv) 
-                      setAmount("")
-                    }}>Cancelar</button>
+                        <button
+                            className={styles.btnPrimary}
+                            onClick={handleContribute}
+                        >
+                            Guardar
+                        </button>
+                        <button
+                            className={styles.btnPrimary}
+                            style={{ color: "#d85a30" }}
+                            onClick={() => {
+                                setSvSelected(emptySv);
+                                setAmount("");
+                            }}
+                        >
+                            Cancelar
+                        </button>
+                    </div>
                 </div>
-            </div>}
+            )}
 
             <div className={styles.card}>
                 <p className={styles.cardTitle}>Agregar meta de ahorro</p>
@@ -553,7 +608,7 @@ const SavingGoalsView: React.FC<{
                         placeholder="Nombre"
                         value={name}
                         onChange={(e) => {
-                          setName(e.target.value)
+                            setName(e.target.value);
                         }}
                     />
                     <input
