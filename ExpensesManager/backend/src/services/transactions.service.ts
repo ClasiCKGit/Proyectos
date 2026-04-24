@@ -15,7 +15,11 @@ type Filters = z.infer<typeof transactionFiltersSchema>;
 function formatTx(tx: any) {
   return {
     ...tx,
-    amount: Number(tx.amount),
+    amount: typeof tx.amount === "number"
+      ? tx.amount
+      : typeof tx.amount?.toNumber === "function"
+        ? tx.amount.toNumber()
+        : Number(tx.amount),
     date: tx.date.toISOString().split("T")[0],
     tags: tx.tags?.map((t: any) => t.tag) ?? [],
   };
@@ -24,14 +28,14 @@ function formatTx(tx: any) {
 // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
 export async function createTransaction(userId: string, data: CreateInput) {
-  const { tags, date, ...rest } = data;
+  const { tags, date, savingsGoalId, ...rest } = data;
   const tx = await prisma.transaction.create({
     data: {
       ...rest,
       date: new Date(date),
-      userId,
+      user: { connect: { id: userId } },
       tags: { create: tags.map((tag) => ({ tag })) },
-    },
+    } as any,
     include: { tags: true },
   });
   return formatTx(tx);

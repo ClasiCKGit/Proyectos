@@ -9,8 +9,16 @@ type UpdateInput = z.infer<typeof updateSavingsGoalSchema>;
 function fmt(g: any) {
   return {
     ...g,
-    targetAmount: Number(g.targetAmount),
-    currentAmount: Number(g.currentAmount),
+    targetAmount: typeof g.targetAmount === "number"
+      ? g.targetAmount
+      : typeof g.targetAmount?.toNumber === "function"
+        ? g.targetAmount.toNumber()
+        : Number(g.targetAmount),
+    currentAmount: typeof g.currentAmount === "number"
+      ? g.currentAmount
+      : typeof g.currentAmount?.toNumber === "function"
+        ? g.currentAmount.toNumber()
+        : Number(g.currentAmount),
     deadline: g.deadline ? g.deadline.toISOString().split("T")[0] : null,
   };
 }
@@ -61,8 +69,8 @@ export async function updateSavingsGoal(id: string, data: UpdateInput) {
 export async function contributeToGoal(id: string, amount: number) {
   const goal = await prisma.savingsGoal.findUniqueOrThrow({ where: { id } });
   const newAmount = Math.min(
-    Number(goal.currentAmount) + amount,
-    Number(goal.targetAmount)
+    goal.currentAmount.toNumber() + amount,
+    goal.targetAmount.toNumber()
   );
   const result = await prisma.savingsGoal.update({
     where: { id },

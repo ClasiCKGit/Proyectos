@@ -10,7 +10,7 @@ import type {
 // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
 export function createTransaction(
-  params: Omit<Transaction, "createdAt" | "updatedAt">
+  params: Omit<Transaction, "id" | "createdAt" | "updatedAt">
 ): Transaction {
   const now = new Date().toISOString();
   return {
@@ -171,7 +171,6 @@ export function generateRecurringTransactions(
     result.push(
       createTransaction({
         ...source,
-        id: undefined as unknown as string, // will be replaced by createTransaction
         date: current.toISOString().split("T")[0],
         recurrence: "none", // clones are non-recurring
       })

@@ -6,7 +6,11 @@ import type { upsertBudgetSchema } from "../schemas";
 type UpsertInput = z.infer<typeof upsertBudgetSchema>;
 
 function fmt(b: any) {
-  return { ...b, limit: Number(b.limit) };
+  return { ...b, limit: typeof b.limit === "number"
+      ? b.limit
+      : typeof b.limit?.toNumber === "function"
+        ? b.limit.toNumber()
+        : Number(b.limit)};
 }
 
 export async function listBudgets(userId: string) {
@@ -38,7 +42,7 @@ export async function upsertBudget(data: UpsertInput) {
 
 export async function deleteBudget(id: string, userId: string) {
   // Verify ownership before deleting
-  const budget = await prisma.budget.findUnique({ where: { id } });
+  const budget = await prisma.budget.findUniqueOrThrow({ where: { id } });
   if (!budget) {
     throw new Error("Presupuesto no encontrado");
   }

@@ -160,8 +160,37 @@ export function clamp(value: number, min: number, max: number): number {
 }
 
 export function parseAmountInput(raw: string): number {
-  // Accept both "1.234,56" (es) and "1,234.56" (en)
-  const normalized = raw.replace(/\./g, "").replace(",", ".");
-  const value = parseFloat(normalized);
-  return isNaN(value) ? 0 : value;
+  const cleaned = raw.trim().replace(/\s+/g, "");
+  if (!cleaned) return 0;
+  if (!/^[+-]?[\d.,]+$/.test(cleaned)) return 0;
+
+  const commaCount = (cleaned.match(/,/g) ?? []).length;
+  const dotCount = (cleaned.match(/\./g) ?? []).length;
+
+  if (commaCount && dotCount) {
+    const lastComma = cleaned.lastIndexOf(",");
+    const lastDot = cleaned.lastIndexOf(".");
+    if (lastComma > lastDot) {
+      return Number(cleaned.replace(/\./g, "").replace(",", "."));
+    }
+    return Number(cleaned.replace(/,/g, ""));
+  }
+
+  if (commaCount) {
+    const thousandsFormat = /^[+-]?\d{1,3}(?:,\d{3})+$/;
+    if (thousandsFormat.test(cleaned)) {
+      return Number(cleaned.replace(/,/g, ""));
+    }
+    return Number(cleaned.replace(",", "."));
+  }
+
+  if (dotCount) {
+    const thousandsFormat = /^[+-]?\d{1,3}(?:\.\d{3})+$/;
+    if (thousandsFormat.test(cleaned)) {
+      return Number(cleaned.replace(/\./g, ""));
+    }
+    return Number(cleaned);
+  }
+
+  return Number(cleaned);
 }
