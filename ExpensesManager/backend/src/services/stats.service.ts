@@ -37,8 +37,9 @@ async function aggregateMonth(userId:string, year: number, month: number, ) {
     if (r.type === "income") {
       totalIncome += val;
     } else {
+      const category = r.category ?? "other";
       totalExpenses += val;
-      byCategory[r.category] = (byCategory[r.category] ?? 0) + val;
+      byCategory[category] = (byCategory[category] ?? 0) + val;
     }
   });
 

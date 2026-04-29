@@ -1,11 +1,13 @@
 // src/index.ts
 import { createApp } from "./app";
 import { prisma } from "./lib/prisma";
+import { startRecurringCron } from "./lib/cron";
 
 const PORT = Number(process.env.PORT ?? 3000);
 
 async function main() {
   await prisma.$connect();
+  startRecurringCron();
   console.log("✅ Conectado a la base de datos");
 
   const app = createApp();

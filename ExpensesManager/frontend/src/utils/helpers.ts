@@ -66,6 +66,9 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   other: "Otros",
 };
 
+export const CATEGORY_OPTIONS: Array<[Category, string]> =
+  Object.entries(CATEGORY_LABELS) as Array<[Category, string]>;
+
 export const CATEGORY_ICONS: Record<Category, string> = {
   housing: "🏠",
   food: "🍽️",
@@ -120,8 +123,8 @@ export function validateTransaction(data: Partial<Omit<Transaction, "id" | "crea
     errors.push({ field: "date", message: "Formato de fecha inválido." });
   }
 
-  if (!data.category) {
-    errors.push({ field: "category", message: "La categoría es obligatoria." });
+  if (data.type === "expense" && !data.category) {
+    errors.push({ field: "category", message: "La categoría es obligatoria para gastos." });
   }
 
   if (!data.type) {

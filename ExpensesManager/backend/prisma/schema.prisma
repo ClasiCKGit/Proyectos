@@ -17,6 +17,7 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  recurringTransactions  RecurringTransaction[]
   transactions Transaction[]
   budgets      Budget[]
   savingsGoals SavingsGoal[]
@@ -44,12 +45,14 @@ model Transaction {
   type        TransactionType
   amount      Decimal        @db.Decimal(12, 2)
   description String         @db.VarChar(100)
-  category    Category
+  category    Category?
   date        DateTime       @db.Date
   notes       String?        @db.Text
   recurrence  RecurrenceType @default(none)
   userId      String
   user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recurringTransactionId String?
+  recurringTransaction   RecurringTransaction? @relation("GeneratedByRecurring", fields: [recurringTransactionId], references: [id], onDelete: SetNull)
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
 
@@ -103,6 +106,43 @@ model SavingsGoal {
 
   @@map("savings_goals")
 }
+
+model RecurringTransaction {
+  id          String         @id @default(uuid())
+  type        TransactionType
+  amount      Decimal        @db.Decimal(12, 2)
+  description String         @db.VarChar(100)
+  category    Category
+  notes       String?        @db.Text
+  recurrence  RecurrenceType // daily | weekly | monthly | yearly
+  startDate   DateTime       @db.Date
+  endDate     DateTime?      @db.Date   // null = sin vencimiento
+  nextDueDate DateTime       @db.Date   // próxima fecha a procesar
+  lastRunAt   DateTime?                 // última vez que se procesó
+  isActive    Boolean        @default(true)
+  userId      String
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  tags        RecurringTransactionTag[]
+  generated   Transaction[]  @relation("GeneratedByRecurring")
+
+  @@index([userId, isActive])
+  @@index([nextDueDate, isActive])
+  @@map("recurring_transactions")
+}
+
+model RecurringTransactionTag {
+  id                    String               @id @default(uuid())
+  tag                   String               @db.VarChar(50)
+  recurringTransactionId String
+  recurringTransaction  RecurringTransaction @relation(fields: [recurringTransactionId], references: [id], onDelete: Cascade)
+
+  @@index([recurringTransactionId])
+  @@map("recurring_transaction_tags")
+}
+
 
 // ─── ENUMS ────────────────────────────────────────────────────────────────────
 

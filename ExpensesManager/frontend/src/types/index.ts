@@ -18,7 +18,7 @@ export interface Transaction {
   type: TransactionType;
   amount: number;
   description: string;
-  category: Category;
+  category?: Category;
   date: string; // ISO 8601
   tags: string[];
   recurrence: RecurrenceType;

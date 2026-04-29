@@ -14,7 +14,7 @@ export const createTransactionSchema = z.object({
   type: z.enum(["income", "expense"]),
   amount: z.number().positive("El monto debe ser mayor a 0").max(999_999_999),
   description: z.string().min(1, "La descripción es obligatoria").max(100),
-  category: CategoryEnum,
+  category: CategoryEnum.nullable().optional(),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Formato de fecha inválido (YYYY-MM-DD)"),
   tags: z.array(z.string().max(50)).max(10).default([]),
   notes: z.string().max(500).optional(),

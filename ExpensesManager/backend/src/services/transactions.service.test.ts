@@ -19,6 +19,7 @@ const mockTx = {
   notes: null,
   recurrence: "none" as const,
   userId: USER_ID,
+  recurringTransactionId: null,
   savingsGoalId: null,
   createdAt: new Date(),
   updatedAt: new Date(),

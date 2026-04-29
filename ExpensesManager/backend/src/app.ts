@@ -9,6 +9,7 @@ import { savingsGoalsRouter } from "./routes/savingGoals.routes"
 import { statsRouter } from "./routes/stats.routes";
 import { requireAuth } from "./middleware/auth";
 import { errorHandler } from "./middleware/errorHandler";
+import { recurringRouter } from "./routes/recurring.routes";
 
 export function createApp() {
   const app = express();
@@ -25,10 +26,11 @@ export function createApp() {
 
   // ─── PROTECTED ────────────────────────────────────────────────────────────
   // requireAuth applied per-router (transactions) or globally here for the rest
-  app.use("/api/transactions", transactionsRouter);          // auth inside router
+  app.use("/api/transactions",  transactionsRouter);          // auth inside router
   app.use("/api/budgets",       requireAuth, budgetsRouter);
   app.use("/api/savings-goals", requireAuth, savingsGoalsRouter);
   app.use("/api/stats",         requireAuth, statsRouter);
+  app.use("/api/recurring",     requireAuth, recurringRouter);
 
   app.use((_req, res) => res.status(404).json({ message: "Ruta no encontrada" }));
   app.use(errorHandler);

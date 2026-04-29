@@ -9,6 +9,7 @@ import {
   refreshTokenExpiresAt,
 } from "../lib/jwt";
 import type { RegisterInput, LoginInput } from "../schemas/auth.schemas";
+import { processRecurringForUser } from "./recurring.service";
 
 const SALT_ROUNDS = 12;
 
@@ -55,10 +56,9 @@ export async function register(input: RegisterInput) {
 
 // ─── LOGIN ────────────────────────────────────────────────────────────────────
 
+
 export async function login(input: LoginInput) {
   const user = await prisma.user.findUnique({ where: { email: input.email } });
-
-  // Always run bcrypt to prevent timing attacks even when user doesn't exist
   const hash = user?.passwordHash ?? "$2a$12$invalidhashtopreventtimingattack";
   const valid = await bcrypt.compare(input.password, hash);
 
@@ -70,8 +70,25 @@ export async function login(input: LoginInput) {
 
   const tokens = await issueTokenPair(user.id, user.email, user.name);
 
+  // ── Procesar recurrencias en background ───────────────────────────────────
+  // No esperamos el resultado para no bloquear el login.
+  // El cliente recibirá las transacciones generadas en la próxima llamada a /stats.
+  processRecurringForUser(user.id)
+    .then((result) => {
+      if (result.generated.length > 0) {
+        console.log(
+          `[auth] Login ${user.email}: ${result.generated.length} recurrencias procesadas`
+        );
+      }
+    })
+    .catch((err) => {
+      // No debe romper el login bajo ninguna circunstancia
+      console.error("[auth] Error procesando recurrencias en login:", err);
+    });
+
   return { user: publicUser(user), ...tokens };
 }
+
 
 // ─── REFRESH ──────────────────────────────────────────────────────────────────
 

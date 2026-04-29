@@ -10,8 +10,16 @@ import { BudgetAlerts } from "./BudgetAlerts";
 import { formatCurrency, formatMonthYear } from "../utils/helpers";
 import styles from "./../styles/Dashboard.module.css";
 import { useTheme } from "../hooks/useTheme";
+import { useRecurring } from "../hooks/useRecurring";
+import { RecurringTab, RecurringNotificationBanner } from "./RecurringTab";
 
-type Tab = "dashboard" | "transactions" | "add" | "budgets" | "savGoals";
+type Tab =
+    | "dashboard"
+    | "transactions"
+    | "add"
+    | "budgets"
+    | "goals"
+    | "recurring";
 
 export const Dashboard: React.FC = () => {
     const {
@@ -28,6 +36,16 @@ export const Dashboard: React.FC = () => {
         upsertBudget,
         removeBudget,
     } = useExpenses();
+    const {
+        items: recurringItems,
+        upcoming,
+        newlyGenerated,
+        addRecurring,
+        editRecurring,
+        toggleRecurring,
+        removeRecurring,
+        dismissNotifications,
+    } = useRecurring();
 
     const [tab, setTab] = useState<Tab>("dashboard");
     const [editingTx, setEditingTx] = useState<Transaction | undefined>();
@@ -74,7 +92,8 @@ export const Dashboard: React.FC = () => {
                         { id: "transactions", label: "Movimientos" },
                         { id: "add", label: "+ Nueva" },
                         { id: "budgets", label: "Presupuestos" },
-                        { id: "savGoals", label: "Metas de ahorro" },
+                        { id: "goals", label: "Metas de ahorro" },
+                        { id: "recurring", label: "Recurrentes" },
                     ] as { id: Tab; label: string }[]
                 ).map(({ id, label }) => (
                     <button
@@ -98,6 +117,10 @@ export const Dashboard: React.FC = () => {
             {tab === "dashboard" && (
                 <div className={styles.content}>
                     <div className={styles.headingContainer}>
+                        <RecurringNotificationBanner
+                            generated={newlyGenerated}
+                            onDismiss={dismissNotifications}
+                        />
                         <h2 className={styles.heading}>
                             {formatMonthYear(
                                 now.getFullYear(),
@@ -253,7 +276,7 @@ export const Dashboard: React.FC = () => {
             )}
 
             {/* ── SAVING GOALS ─────────────────────────────────────────────────────── */}
-            {tab === "savGoals" && (
+            {tab === "goals" && (
                 <SavingGoalsView
                     addTransaction={addTransaction}
                     upsert={upsertSavingsGoal}
@@ -261,6 +284,25 @@ export const Dashboard: React.FC = () => {
                     remove={removeSavingsGoal}
                     savingsGoals={savingsGoals}
                 />
+            )}
+
+            {/* ── RECURRENT TRANSACTIONS ───────────────────────────────────────────── */}
+            {tab === "recurring" && (
+                <div className={styles.content}>
+                    <h2 className={styles.heading}>
+                        Transacciones recurrentes
+                    </h2>
+                    <RecurringTab
+                        items={recurringItems}
+                        upcoming={upcoming}
+                        newlyGenerated={newlyGenerated}
+                        onAdd={addRecurring}
+                        onEdit={editRecurring}
+                        onToggle={toggleRecurring}
+                        onDelete={removeRecurring}
+                        onDismissNotifications={dismissNotifications}
+                    />
+                </div>
             )}
         </div>
     );
@@ -351,8 +393,8 @@ const BudgetsView: React.FC<{
                                             pct >= 100
                                                 ? "#D85A30"
                                                 : pct >= 80
-                                                    ? "#BA7517"
-                                                    : "#1D9E75",
+                                                  ? "#BA7517"
+                                                  : "#1D9E75",
                                     }}
                                 />
                             </div>

@@ -105,9 +105,6 @@ export function sortTransactions(
       case "description":
         comparison = a.description.localeCompare(b.description);
         break;
-      case "category":
-        comparison = a.category.localeCompare(b.category);
-        break;
     }
 
     return sort.direction === "asc" ? comparison : -comparison;

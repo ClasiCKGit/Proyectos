@@ -13,7 +13,7 @@ export type FormState = {
   type: "expense" | "income";
   amount: string;
   description: string;
-  category: Category;
+  category?: Category;
   date: string;
   tags: string;
   notes: string;
@@ -86,11 +86,12 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
 
   const handleSubmit = () => {
     const amount = parseAmountInput(form.amount);
+    const categoria = (form.type === "expense" ? form.category : undefined)
     const payload = {
       type: form.type,
       amount,
       description: form.description.trim(),
-      category: form.category,
+      category: categoria,
       date: form.date,
       tags: form.tags
         .split(",")
