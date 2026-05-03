@@ -183,6 +183,33 @@ export async function processRecurringForUser(userId: string): Promise<ProcessRe
     result.processed++;
   }
 
+  const dueInactive = await prisma.recurringTransaction.findMany({
+    where: {
+      userId,
+      isActive: false,
+      nextDueDate: { lte: today },
+    },
+    include: { tags: true },
+  });
+
+  for (const recurring of dueInactive) {
+
+    const nextDue = getNextDueDate(today, recurring.recurrence);
+    const stillActive = isStillActive(recurring.endDate, nextDue);
+
+    await prisma.recurringTransaction.update({
+      where: { id: recurring.id },
+      data: {
+        nextDueDate: nextDue,
+        lastRunAt: new Date(),
+        isActive: stillActive,
+      },
+    });
+
+    if (!stillActive) result.deactivated++;
+    result.processed++;
+  }
+
   return result;
 }
 

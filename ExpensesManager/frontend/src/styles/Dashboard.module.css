@@ -103,59 +103,6 @@
     font-family: inherit;
 }
 
-.budgetRow {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding-bottom: 12px;
-    margin-bottom: 12px;
-    border-bottom: 0.5px solid var(--color-border, #eee);
-}
-
-.budgetHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.budgetTitle{
-    font-size: 14;
-    font-weight: 500;
-    color: var(--color-text-primary);
-}
-
-.track {
-    height: 6px;
-    background: var(--color-bg-secondary, #eee);
-    border-radius: 3px;
-    overflow: hidden;
-}
-
-.bar {
-    height: 100%;
-    border-radius: 3px;
-    transition: width 0.5s;
-}
-
-.addBudgetRow {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-}
-
-.field {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    width: 100%;
-}
-
 .input {
     padding: 8px 10px;
     border: 0.5px solid var(--color-border, #ddd);
@@ -182,38 +129,4 @@
 .btnPrimary:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 0 #ababab;
-}
-
-.removeBtn {
-    padding: 2px 6px;
-    border: 0.5px solid #d85a3044;
-    border-radius: 6px;
-    background: transparent;
-    color: #d85a30;
-    font-size: 11px;
-    cursor: pointer;
-    font-family: inherit;
-    transition: all 0.2s ease;
-}
-
-.removeBtn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 2px 0 rgb(210, 32, 32);
-}
-
-.addBtn {
-    padding: 2px 2px;
-    border: 0.5px solid #bc30d844;
-    border-radius: 6px;
-    background: transparent;
-    color: #9e10d2;
-    font-size: 11px;
-    cursor: pointer;
-    font-family: inherit;
-    transition: all 0.2s ease;
-}
-
-.addBtn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 2px 0 #9e10d2;
 }

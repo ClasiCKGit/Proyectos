@@ -1,0 +1,145 @@
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.heading {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--color-text-primary);
+}
+
+.budgetRow {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    border-bottom: 0.5px solid var(--color-border, #eee);
+}
+
+.budgetHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.budgetTitle{
+    font-size: 14;
+    font-weight: 500;
+    color: var(--color-text-primary);
+}
+
+.track {
+    height: 6px;
+    background: var(--color-bg-secondary, #eee);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.bar {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s;
+}
+
+.addBudgetRow {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+}
+
+.card {
+    background: var(--color-bg-primary, #fff);
+    border: 0.5px solid var(--color-border, #e5e5e5);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+}
+
+.cardTitle {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-secondary, #888);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0 0 1rem;
+}
+
+.input {
+    padding: 8px 10px;
+    border: 0.5px solid var(--color-border, #ddd);
+    border-radius: 8px;
+    background: var(--color-bg-primary, #fff);
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+}
+
+.btnPrimary {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    background: var(--color-text-primary, #111);
+    color: var(--color-bg-primary, #fff);
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.btnPrimary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 0 #ababab;
+}
+
+
+.removeBtn {
+    padding: 2px 6px;
+    border: 0.5px solid #d85a3044;
+    border-radius: 6px;
+    background: transparent;
+    color: #d85a30;
+    font-size: 11px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.removeBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 0 rgb(210, 32, 32);
+}
+
+.addBtn {
+    padding: 2px 2px;
+    border: 0.5px solid #bc30d844;
+    border-radius: 6px;
+    background: transparent;
+    color: #9e10d2;
+    font-size: 11px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.addBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 0 #9e10d2;
+}

@@ -6,7 +6,7 @@ import {
   CATEGORY_ICONS,
 } from "../utils/helpers";
 import type { Transaction, SavingsGoal } from "../types";
-import styles from "../styles/Dashboard.module.css";
+import styles from "../styles/Budgets&SavingGoals.module.css";
 
 export const SavingGoalsView: React.FC<{
   addTransaction: (
