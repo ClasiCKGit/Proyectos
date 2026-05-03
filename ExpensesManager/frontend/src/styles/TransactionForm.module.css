@@ -77,6 +77,12 @@
     font-size: 13px;
     cursor: pointer;
     font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 0 var(--color-border);
 }
 
 .btnPrimary {
@@ -88,6 +94,12 @@
     font-size: 13px;
     cursor: pointer;
     font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.btnPrimary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 0 var(--color-text-secondary);
 }
 
 .btnDanger {
@@ -100,6 +112,12 @@
     cursor: pointer;
     font-family: inherit;
     margin-left: auto;
+    transition: all 0.2s ease;
+}
+
+.btnDanger:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 0 #ac4b2b;
 }
 
 .none {

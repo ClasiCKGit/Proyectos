@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import type { Transaction, Category, RecurrenceType } from "../types";
 import {
-  CATEGORY_ICONS,
-  CATEGORY_LABELS,
   validateTransaction,
   todayISO,
   parseAmountInput,
 } from "../utils/helpers";
 import styles from './../styles/TransactionForm.module.css'
+import { CategorySelect } from "./ui/CategorySelect";
 
 export type FormState = {
   type: "expense" | "income";
@@ -62,6 +61,9 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
       : { ...EMPTY_FORM }
   );
   const [errors, setErrors] = useState<Record<string, string>>({});
+  //States para el select de Category
+  const [open, setOpen] = useState<boolean>(false)
+  const [category, setCategory] = useState<Category>("food")
 
   useEffect(() => {
     if (initial) {
@@ -69,7 +71,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
         type: initial.type,
         amount: String(initial.amount),
         description: initial.description,
-        category: initial.category,
+        category: category,
         date: initial.date,
         tags: initial.tags.join(", "),
         notes: initial.notes ?? "",
@@ -185,35 +187,12 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
         {/* Category */}
         <div className={`${form.type === "expense" ? styles.field : styles.none}`}>
           <label className={styles.label}>Categoría</label>
-          <select
-          className={styles.input}
-            style={inputStyle("category")}
-            value={form.category}
-            onChange={(e) => set("category", e.target.value as Category)}
-          >
-            {Object.entries(CATEGORY_LABELS).map(([k, v]) => (
-              <option key={k} value={k}>
-                {CATEGORY_ICONS[k as Category]} {v}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Recurrence */}
-        <div className={styles.field}>
-          <label className={styles.label}>Recurrencia</label>
-          <select
-          className={styles.input}
-            style={inputStyle("recurrence")}
-            value={form.recurrence}
-            onChange={(e) => set("recurrence", e.target.value as RecurrenceType)}
-          >
-            <option value="none">Sin repetición</option>
-            <option value="daily">Diaria</option>
-            <option value="weekly">Semanal</option>
-            <option value="monthly">Mensual</option>
-            <option value="yearly">Anual</option>
-          </select>
+          <CategorySelect
+            category={form.category}
+            open={open}
+            setOpen={setOpen}
+            setCategory={setCategory}
+          />
         </div>
 
         {/* Tags */}
@@ -230,7 +209,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
         </div>
 
         {/* Notes */}
-        <div className={styles.field} style={form.type !== "expense" ? {gridColumn: "1 / -1"} : {}}>
+        <div className={styles.field} style={form.type !== "income" ? {gridColumn: "1 / -1"} : {}}>
           <label className={styles.label}>Notas</label>
           <input
           className={styles.input}

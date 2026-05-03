@@ -6,6 +6,7 @@ import type {
   PaginationOptions,
   PaginatedResult,
 } from "../types";
+import { parseLocalDate, toISODateLocal } from "./helpers";
 
 // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
@@ -139,8 +140,8 @@ export function generateRecurringTransactions(
   if (source.recurrence === "none") return [];
 
   const result: Transaction[] = [];
-  const start = new Date(source.date);
-  const end = new Date(upToDate);
+  const start = parseLocalDate(source.date);
+  const end = parseLocalDate(upToDate);
   let current = new Date(start);
 
   const advance = (date: Date): Date => {
@@ -168,7 +169,7 @@ export function generateRecurringTransactions(
     result.push(
       createTransaction({
         ...source,
-        date: current.toISOString().split("T")[0],
+        date: toISODateLocal(current),
         recurrence: "none", // clones are non-recurring
       })
     );

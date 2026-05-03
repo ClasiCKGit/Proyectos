@@ -190,10 +190,14 @@ export function projectEndOfMonthBalance(
 ): number {
   const today = new Date();
   const daysInMonth = new Date(year, month, 0).getDate();
-  const currentDay = today.getDate();
+  const isCurrentMonth =
+    today.getFullYear() === year &&
+    today.getMonth() + 1 === month;
+
+  const currentDay = isCurrentMonth ? today.getDate() : new Date(year, month, 0).getDate();
 
   const stats = getMonthlyStats(transactions, year, month);
-  const dailyRate = stats.balance / currentDay;
+  const dailyRate = currentDay > 0 ? stats.balance / currentDay : 0;
 
   return stats.balance + dailyRate * (daysInMonth - currentDay);
 }

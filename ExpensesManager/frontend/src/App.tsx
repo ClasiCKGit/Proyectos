@@ -4,10 +4,21 @@ import { useAuth } from "./hooks/useAuth";
 import { LoginForm, RegisterForm } from "./components/AuthForms";
 import { Dashboard } from "./components/Dashboard";
 import styles from './App.module.css'
+import { useTheme } from "./hooks/useTheme";
 
 export default function App() {
   const { user, isAuthenticated, loading, login, logout, register } = useAuth();
   const [screen, setScreen] = useState<"login" | "register">("login");
+  const [hora, setHora] = useState(new Date())
+
+    const { theme, toggleTheme } = useTheme();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setHora(new Date())
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Listen for forced logout (expired token + no refresh)
   useEffect(() => {
@@ -47,6 +58,27 @@ export default function App() {
       {/* Header */}
       <header className={styles.header}>
         <span className={styles.logo}>💰 ExpensesManager V1</span>
+                                {/* ── THEME TOGGLE BUTTON ────────────────────────────────── */}
+                        <div className={styles.wrapper} onClick={toggleTheme}>
+                            <div
+                                className={`${styles.toggle} ${
+                                    theme === "dark" ? styles.toggleActive : ""
+                                }`}
+                            >
+                                <div
+                                    className={`${styles.thumb} ${
+                                        theme === "dark"
+                                            ? styles.thumbActive
+                                            : ""
+                                    }`}
+                                />
+                            </div>
+
+                            <span className={styles.icon}>
+                                {theme === "dark" ? "🌙" : "☀️"}
+                            </span>
+                        </div>
+        <div className={styles.reloj}>{hora.toLocaleString().split(",")[0]} - {hora.toLocaleString().split(",")[1]}</div>
         <div className={styles.userRow}>
           <span className={styles.userName}>{user?.name}</span>
           <button className={styles.logoutBtn} onClick={logout}>

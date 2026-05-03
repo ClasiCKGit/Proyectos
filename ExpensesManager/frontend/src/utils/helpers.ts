@@ -34,7 +34,7 @@ export function formatRelativeDate(isoDate: string): string {
   const date = new Date(year, month - 1, day);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const diff = Math.round((date.getTime() - today.getTime()) / 86400000);
+  const diff = Math.floor((date.getTime() - today.getTime()) / 86400000);
 
   if (diff === 0) return "Hoy";
   if (diff === -1) return "Ayer";
@@ -155,7 +155,7 @@ export function validateBudget(
 // ─── MISC HELPERS ─────────────────────────────────────────────────────────────
 
 export function todayISO(): string {
-  return new Date().toISOString().split("T")[0];
+  return new Date().toLocaleDateString("sv-SE");
 }
 
 export function clamp(value: number, min: number, max: number): number {
@@ -196,4 +196,16 @@ export function parseAmountInput(raw: string): number {
   }
 
   return Number(cleaned);
+}
+
+export function parseLocalDate(iso: string): Date {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
+
+export function toISODateLocal(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
 }

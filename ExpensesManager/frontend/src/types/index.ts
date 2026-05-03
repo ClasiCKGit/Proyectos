@@ -13,7 +13,7 @@ export type RecurrenceType = "none" | "daily" | "weekly" | "monthly" | "yearly";
 
 export type TransactionType = "expense" | "income";
 
-export interface Transaction {
+interface BaseTransaction {
   id: string;
   type: TransactionType;
   amount: number;
@@ -27,6 +27,18 @@ export interface Transaction {
   createdAt: string;
   updatedAt: string;
 }
+
+interface ExpenseTransaction extends BaseTransaction {
+  type: "expense";
+  category: Category; // ✅ obligatorio
+}
+
+interface IncomeTransaction extends BaseTransaction {
+  type: "income";
+  category?: never; // 🚫 no debería existir
+}
+
+export type Transaction = ExpenseTransaction | IncomeTransaction;
 
 export interface Budget {
   id: string | undefined;

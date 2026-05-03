@@ -58,6 +58,7 @@
     border: 0.5px solid var(--color-border, #ddd);
     border-radius: 8px;
     overflow: hidden;
+    transition: all 0.2s ease;
 }
 
 .viewBtn {
@@ -68,11 +69,20 @@
     cursor: pointer;
     font-family: inherit;
     color: var(--color-text-secondary, #888);
+    transition: all 0.2s ease;
+}
+
+.viewBtn:hover {
+    background-color: var(--color-bg-secondary);
 }
 
 .viewBtnActive {
     background: var(--color-text-primary, #111);
     color: var(--color-bg-primary, #fff);
+}
+
+.viewBtnActive:hover {
+    background-color: var(--color-text-primary);
 }
 
 .addBtn {
@@ -85,6 +95,12 @@
     cursor: pointer;
     font-family: inherit;
     font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.addBtn:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 4px 0 #888;
 }
 
 .formCard {
@@ -233,6 +249,34 @@
     justify-content: center;
     font-family: inherit;
 }
+.actionBtn:hover{
+    transform: translateY(-1px);
+    box-shadow: 0 2px 0 var(--color-text-secondary);
+}
+
+.pause{
+    color: #BA7517;
+}
+.pause:hover{
+    transform: translateY(-1px);
+    box-shadow: 0 2px 0#BA7517;
+}
+
+.activate{
+    color: #1D9E75;
+}
+.activate:hover{
+    transform: translateY(-1px);
+    box-shadow: 0 2px 0#1D9E75;
+}
+
+.delete{
+    color: #D85A30;
+}
+.delete:hover{
+    transform: translateY(-1px);
+    box-shadow: 0 2px 0#D85A30;
+}
 
 /* ─── FORM ─────────────────────────────────────────────────*/
 
@@ -324,6 +368,16 @@
     font-weight: 500;
     cursor: pointer;
     font-family: inherit;
+}
+
+.btnPrimary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 0 var(--color-text-secondary);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 0 var(--color-bg-secondary);
 }
 
 /* ─── CALENDAR ─────────────────────────────────────────────*/
