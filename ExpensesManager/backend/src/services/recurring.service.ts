@@ -1,7 +1,9 @@
 // src/services/recurring.service.ts
+import { monitorEventLoopDelay } from "perf_hooks";
 import { prisma } from "../lib/prisma";
 import { getNextDueDate, getPendingDates, isStillActive } from "../lib/recurrence";
 import type { CreateRecurringInput, UpdateRecurringInput } from "../schemas/recurring.schemas";
+import { date, number } from "zod/v4";
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 
@@ -102,6 +104,23 @@ export async function toggleRecurring(userId: string, id: string) {
   return fmt(row);
 }
 
+export async function getMonthlyStats(userId: string) {
+  let monthlyExp = 0
+  let monthlyInc = 0
+  
+  const today = new Date()
+  const todayMonth = today.getMonth()+1
+  const recurrents = await getUpcomingOccurrences(userId)
+
+  for (const r of recurrents) {
+    if (todayMonth !== Number(r.date.split("-")[1])) continue
+    
+    r.type === "expense" ? monthlyExp+=r.amount : monthlyInc+=r.amount 
+  }
+
+  return {monthlyExp, monthlyInc}
+}
+
 // ─── PROCESSOR ────────────────────────────────────────────────────────────────
 
 export interface ProcessResult {
@@ -195,18 +214,17 @@ export async function processRecurringForUser(userId: string): Promise<ProcessRe
   for (const recurring of dueInactive) {
 
     const nextDue = getNextDueDate(today, recurring.recurrence);
-    const stillActive = isStillActive(recurring.endDate, nextDue);
 
     await prisma.recurringTransaction.update({
       where: { id: recurring.id },
       data: {
         nextDueDate: nextDue,
         lastRunAt: new Date(),
-        isActive: stillActive,
+        isActive: false,
       },
     });
 
-    if (!stillActive) result.deactivated++;
+    result.deactivated++;
     result.processed++;
   }
 

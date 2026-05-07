@@ -24,6 +24,15 @@ recurringRouter.get("/upcoming", async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+// GET /api/recurring/monthlystats
+recurringRouter.get("/monthlystats", async (req, res, next) => {
+  try {
+    const monthlys = await svc.getMonthlyStats(req.user!.id);
+    if (!monthlys) return res.status(404).json({ message: "Error encontrando las estadisticas"});
+    res.json(monthlys)
+  } catch (err) { next(err); }
+})
+
 // GET /api/recurring/:id
 recurringRouter.get("/:id", async (req, res, next) => {
   try {

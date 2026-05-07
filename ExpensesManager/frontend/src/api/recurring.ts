@@ -28,6 +28,11 @@ export interface UpcomingOccurrence {
   category: string;
 }
 
+export interface ProyectedMonthly {
+  monthlyExp: number;
+  monthlyInc: number;
+}
+
 export const recurringApi = {
   list: () =>
     request<RecurringTransaction[]>("/recurring"),
@@ -61,4 +66,10 @@ export const recurringApi = {
       "/recurring/process",
       { method: "POST" }
     ),
+
+  monthly: () => 
+    request<ProyectedMonthly>(
+      "/recurring/monthlystats",
+      { method: "GET"}
+    )
 };

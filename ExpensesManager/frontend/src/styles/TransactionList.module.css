@@ -11,7 +11,7 @@
     border-radius: 8px;
     font-size: 14px;
     background: var(--color-bg-primary, #fff);
-    color: inherit;
+    color: var(--color-text-primary);
     outline: none;
     font-family: inherit;
 }

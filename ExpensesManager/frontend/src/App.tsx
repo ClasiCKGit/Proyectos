@@ -58,26 +58,25 @@ export default function App() {
       {/* Header */}
       <header className={styles.header}>
         <span className={styles.logo}>💰 ExpensesManager V1</span>
-                                {/* ── THEME TOGGLE BUTTON ────────────────────────────────── */}
-                        <div className={styles.wrapper} onClick={toggleTheme}>
-                            <div
-                                className={`${styles.toggle} ${
-                                    theme === "dark" ? styles.toggleActive : ""
-                                }`}
-                            >
-                                <div
-                                    className={`${styles.thumb} ${
-                                        theme === "dark"
-                                            ? styles.thumbActive
-                                            : ""
-                                    }`}
-                                />
-                            </div>
-
-                            <span className={styles.icon}>
-                                {theme === "dark" ? "🌙" : "☀️"}
-                            </span>
-                        </div>
+          {/* ── THEME TOGGLE BUTTON ────────────────────────────────── */}
+          <div className={styles.wrapper} onClick={toggleTheme}>
+              <div
+                  className={`${styles.toggle} ${
+                      theme === "dark" ? styles.toggleActive : ""
+                  }`}
+              >
+                  <div
+                      className={`${styles.thumb} ${
+                          theme === "dark"
+                              ? styles.thumbActive
+                              : ""
+                      }`}
+                  />
+              </div>
+              <span className={styles.icon}>
+                  {theme === "dark" ? "🌙" : "☀️"}
+              </span>
+          </div>
         <div className={styles.reloj}>{hora.toLocaleString().split(",")[0]} - {hora.toLocaleString().split(",")[1]}</div>
         <div className={styles.userRow}>
           <span className={styles.userName}>{user?.name}</span>

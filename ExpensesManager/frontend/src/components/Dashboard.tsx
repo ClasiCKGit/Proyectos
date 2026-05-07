@@ -40,6 +40,7 @@ export const Dashboard: React.FC = () => {
     const {
         items: recurringItems,
         upcoming,
+        monthly,
         newlyGenerated,
         addRecurring,
         editRecurring,
@@ -274,6 +275,7 @@ export const Dashboard: React.FC = () => {
                     <RecurringTab
                         items={recurringItems}
                         upcoming={upcoming}
+                        monthly={monthly}
                         newlyGenerated={newlyGenerated}
                         onAdd={addRecurring}
                         onEdit={editRecurring}
